@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="dark light" />
 
-  <title>M. Kotantakis — Internal tools, Jira apps & GCP automation</title>
+  <title>M. Kotantakis — Internal tools, Jira apps &amp; GCP automation</title>
   <meta name="description"
     content="I build custom internal tools for growing teams: Atlassian Forge apps for Jira, Google Apps Script web apps, and serverless automation on Google Cloud." />
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="M. Kotantakis — Internal tools & workflow automation" />
+  <meta property="og:title" content="M. Kotantakis — Internal tools &amp; workflow automation" />
   <meta property="og:description"
     content="Custom Jira apps, Google Workspace tools and GCP automation for teams who have outgrown the spreadsheet." />
   <meta name="theme-color" content="#0b0d12" media="(prefers-color-scheme: dark)" />
@@ -94,7 +94,7 @@
           <li>Jira Cloud REST</li>
           <li>Google Apps Script</li>
           <li>Cloud Firestore</li>
-          <li>Cloud Functions</li>
+          <li>Cloud Run</li>
           <li>Secret Manager</li>
           <li>Node.js</li>
         </ul>
@@ -140,16 +140,15 @@
           </article>
 
           <article class="card">
-            <h3>Serverless automation on GCP</h3>
+            <h3>Internal tools &amp; automation on GCP</h3>
             <p>
-              Scheduled integrations that keep two systems in step: Cloud Scheduler, Cloud
-              Functions, Secret Manager, Firestore. Built to survive the things that break every
-              naive sync script — overlapping runs, rate limits, and records that don't match the
-              documentation.
+              Web apps and scheduled jobs on Cloud Run, Firestore and Secret Manager — usually
+              wired into a tool your team already lives in, like Jira, so the work lands where
+              people already look instead of in another dashboard nobody opens.
             </p>
             <ul class="card__list">
-              <li>Idempotent, incremental, resumable</li>
-              <li>Dead-letter handling instead of silent data loss</li>
+              <li>Scheduled jobs that are safe to run twice</li>
+              <li>Two-way integrations with loop prevention</li>
               <li>Structured logs you can alert on</li>
             </ul>
           </article>
@@ -359,98 +358,104 @@
         <!-- ---------- case study 3 ---------- -->
         <article class="case" id="case-gcp">
           <div class="case__body">
-            <p class="eyebrow">Google Cloud · Node.js</p>
-            <h3 class="case__title">Serverless Sync Engine</h3>
+            <p class="eyebrow">Google Cloud · Jira · Node.js</p>
+            <h3 class="case__title">SaaS Renewal Tracker</h3>
 
             <div class="case__section">
               <h4>The problem</h4>
               <p>
-                Contact data needed to stay in step between a third-party CRM and an internal
-                system. The script that did it had grown the usual failure modes: overlapping runs
-                double-writing, one malformed record killing an entire batch, a rate limit turning
-                into a retry storm, and no way to tell whether it had silently stopped working.
+                Companies don't lose money on SaaS because the renewal date surprises them. They
+                lose it because the <em>cancellation</em> deadline passed weeks earlier and nobody
+                noticed. A contract renewing on 1 June with 30 days' notice has to be cancelled by
+                1 May — and on 2 May the decision has already been made for you. That date isn't on
+                the invoice and isn't in anyone's calendar. The spreadsheet that tracks renewals
+                stores the notice period; it never uses it.
               </p>
             </div>
 
             <div class="case__section">
               <h4>What I built</h4>
               <p>
-                A scheduled pipeline with a run lock taken in a database transaction, an
-                incremental window driven by a stored watermark, and idempotent writes keyed on
-                the upstream id — so a replay overwrites rather than duplicates. Records that
-                can't be mapped go to a dead-letter collection with the reason, so one bad record
-                never blocks the good ones. The API key lives in Secret Manager and is fetched at
-                runtime.
+                An internal web app on Google Cloud, wired into Jira in both directions. A dashboard
+                shows annual spend and <em>spend at risk</em> — money on auto-renewing contracts
+                whose deadline has passed or is within a week. A daily job computes every real
+                deadline and raises a Jira task for the contract's owner at 90, 60, 30 and 7 days
+                out. The owner answers by adding one label and closing the task; a webhook updates
+                the tracker, rolls the term forward or cancels it, and records who decided and when.
               </p>
             </div>
 
             <div class="case__section">
               <h4>The decision that shaped it</h4>
               <p>
-                The retry policy uses full jitter — a uniform delay in <em>[0, exponential]</em>,
-                not the exponential value with a small wobble. With a wobble, every client that
-                failed together retries in a cluster and recreates the burst that caused the
-                failure. And the watermark only advances when a run wrote everything it read:
-                redoing idempotent work is cheap, and skipping a record that was never written is
-                not.
+                Two places where idempotency costs real money, both with dedicated tests: running
+                the daily job twice must not raise a second Jira task, and applying a decision twice
+                must not roll the contract forward two years — which would silently push the renewal
+                date out of range and stop it being watched at all. Jira delivers webhooks more than
+                once, so the second one isn't hypothetical. And three callers reach the service, each
+                proving identity differently: Google Sign-In for people, verified OIDC for the
+                scheduler, and a constant-time shared secret for Jira, which can't mint a Google token.
               </p>
             </div>
 
             <ul class="tags">
-              <li>Cloud Functions gen 2</li>
-              <li>Cloud Scheduler + OIDC</li>
-              <li>Secret Manager</li>
+              <li>Cloud Run</li>
+              <li>Cloud Scheduler</li>
               <li>Firestore</li>
-              <li>44 tests, zero deps</li>
+              <li>Jira REST + Automation</li>
+              <li>Secret Manager</li>
+              <li>76 tests, zero deps</li>
             </ul>
           </div>
 
           <figure class="case__figure">
             <svg viewBox="0 0 340 260" role="img" aria-labelledby="diagram-3-title" class="diagram">
               <title id="diagram-3-title">
-                Architecture: Cloud Scheduler invokes the function with an OIDC token; the
-                function reads its key from Secret Manager, pages the upstream API, maps records
-                through a pure core, and writes to Firestore with a dead-letter path.
+                Architecture: people, Cloud Scheduler and Jira all reach one Cloud Run service, each
+                authenticating differently; the service delegates every decision to a pure engine and
+                persists to Firestore.
               </title>
 
               <g class="diagram__group">
-                <rect x="12" y="10" width="140" height="34" rx="6" />
-                <text x="82" y="31">Cloud Scheduler</text>
-                <rect x="188" y="10" width="140" height="34" rx="6" />
-                <text x="258" y="31">Secret Manager</text>
+                <rect x="12" y="10" width="96" height="34" rx="6" />
+                <text x="60" y="26">People</text>
+                <text x="60" y="37" class="diagram__sub">Sign-In</text>
+
+                <rect x="122" y="10" width="96" height="34" rx="6" />
+                <text x="170" y="26">Scheduler</text>
+                <text x="170" y="37" class="diagram__sub">OIDC</text>
+
+                <rect x="232" y="10" width="96" height="34" rx="6" />
+                <text x="280" y="26">Jira</text>
+                <text x="280" y="37" class="diagram__sub">secret</text>
               </g>
 
               <g class="diagram__group">
-                <rect x="12" y="72" width="316" height="40" rx="6" />
-                <text x="170" y="89">Cloud Function · run lock</text>
-                <text x="170" y="105" class="diagram__sub">auth required · max 3 instances</text>
+                <rect x="12" y="76" width="316" height="38" rx="6" />
+                <text x="170" y="92">Cloud Run · one service</text>
+                <text x="170" y="106" class="diagram__sub">three callers, three checks</text>
               </g>
 
               <g class="diagram__group diagram__group--accent">
-                <rect x="12" y="140" width="316" height="44" rx="6" />
-                <text x="170" y="158">Core — PURE</text>
-                <text x="170" y="175" class="diagram__sub">map · validate · plan window</text>
+                <rect x="12" y="146" width="316" height="44" rx="6" />
+                <text x="170" y="164">Renewal engine — PURE</text>
+                <text x="170" y="181" class="diagram__sub">deadlines · thresholds · planning</text>
               </g>
 
               <g class="diagram__group">
-                <rect x="12" y="212" width="98" height="34" rx="6" />
-                <text x="61" y="233">contacts</text>
-                <rect x="122" y="212" width="98" height="34" rx="6" />
-                <text x="171" y="233">syncState</text>
-                <rect x="232" y="212" width="96" height="34" rx="6" />
-                <text x="280" y="233">dead-letter</text>
+                <rect x="12" y="214" width="150" height="34" rx="6" />
+                <text x="87" y="235">Firestore</text>
+                <rect x="186" y="214" width="142" height="34" rx="6" />
+                <text x="257" y="235">Secret Manager</text>
               </g>
 
               <g class="diagram__arrows">
-                <path d="M82 44 V72" />
-                <path d="M258 44 V72" />
-                <path d="M170 112 V140" />
-                <path d="M61 184 V212" />
-                <path d="M171 184 V212" />
-                <path d="M280 184 V212" />
+                <path d="M60 44 V76" /><path d="M170 44 V76" /><path d="M280 44 V76" />
+                <path d="M170 114 V146" />
+                <path d="M87 190 V214" /><path d="M257 190 V214" />
               </g>
             </svg>
-            <figcaption>Every failure mode has a named, tested behaviour.</figcaption>
+            <figcaption>One service, three ways of proving who is calling.</figcaption>
           </figure>
         </article>
       </div>
