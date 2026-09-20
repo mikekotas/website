@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+
+  <title>M. Kotantakis — Internal tools, Jira apps & GCP automation</title>
+  <meta name="description"
+    content="I build custom internal tools for growing teams: Atlassian Forge apps for Jira, Google Apps Script web apps, and serverless automation on Google Cloud." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="M. Kotantakis — Internal tools & workflow automation" />
+  <meta property="og:description"
+    content="Custom Jira apps, Google Workspace tools and GCP automation for teams who have outgrown the spreadsheet." />
+  <meta name="theme-color" content="#0b0d12" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%234f7cff'/%3E%3Cpath d='M9 21V11h3.2l3.3 5.6L18.8 11H22v10h-2.9v-5.4L16.4 21h-1.8l-2.7-5.4V21z' fill='%23fff'/%3E%3C/svg%3E" />
+
+  <!--
+      Set the theme before first paint. Not a module, not deferred: anything
+      asynchronous here produces a flash of the wrong theme on every load for
+      anyone who pinned a preference.
+    -->
+  <script>
+    (() => {
+      try {
+        const pinned = localStorage.getItem('color-scheme');
+        if (pinned === 'light' || pinned === 'dark') {
+          document.documentElement.dataset.theme = pinned;
+          document.querySelector('meta[name="color-scheme"]').content = pinned;
+        }
+      } catch (err) {
+        /* Storage blocked — fall back to the system preference. */
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__brand" href="#top">
+        <span class="nav__mark" aria-hidden="true">MK</span>
+        <span>M. Kotantakis</span>
+      </a>
+
+      <ul class="nav__links">
+        <li><a href="#services">What I build</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#approach">Approach</a></li>
+      </ul>
+
+      <div class="nav__actions">
+        <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Switch colour theme">
+          <span id="theme-label">System</span>
+        </button>
+        <a class="button button--primary" href="#hire">Work with me</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- ================================================== hero -->
+    <section class="hero" id="top">
+      <div class="shell">
+        <p class="eyebrow">Internal tools developer</p>
+
+        <h1 class="hero__title">
+          I build the internal tools your team
+          <span class="hero__accent">keeps rebuilding in spreadsheets.</span>
+        </h1>
+
+        <p class="hero__lede">
+          Custom Jira apps, Google Workspace web apps and serverless automation on Google Cloud.
+          The kind of software that removes a recurring manual process permanently — with the
+          access controls, audit trail and tests that make it safe to depend on.
+        </p>
+
+        <div class="hero__actions">
+          <a class="button button--primary button--lg" href="#work">See the work</a>
+          <a class="button button--lg" href="#hire">Start a project</a>
+        </div>
+
+        <ul class="hero__stack" aria-label="Core technologies">
+          <li>Atlassian Forge</li>
+          <li>Jira Cloud REST</li>
+          <li>Google Apps Script</li>
+          <li>Cloud Firestore</li>
+          <li>Cloud Functions</li>
+          <li>Secret Manager</li>
+          <li>Node.js</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================================================== services -->
+    <section class="section" id="services" aria-labelledby="services-title">
+      <div class="shell">
+        <h2 class="section__title" id="services-title">What I build</h2>
+        <p class="section__lede">
+          Three things, done properly, rather than everything done approximately.
+        </p>
+
+        <div class="cards">
+          <article class="card">
+            <h3>Atlassian Forge apps for Jira</h3>
+            <p>
+              Custom issue panels, project settings screens, event triggers and scheduled jobs —
+              for the business rules Jira's built-in automation can't express. Runs entirely on
+              Atlassian's infrastructure, so there's no server to own and no data leaving your
+              tenant.
+            </p>
+            <ul class="card__list">
+              <li>Validation and approval gates on transitions</li>
+              <li>Per-project configuration for admins</li>
+              <li>Audit trails that satisfy a compliance review</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h3>Google Workspace web apps</h3>
+            <p>
+              Apps Script web apps backed by Firestore or Sheets, authenticated with the Google
+              accounts your team already has. Replaces the shared spreadsheet that everyone can
+              edit and nobody can audit — without buying another per-seat SaaS licence.
+            </p>
+            <ul class="card__list">
+              <li>Role-based access, enforced server-side</li>
+              <li>Append-only audit history</li>
+              <li>Scheduled reminders and SLA escalation</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h3>Serverless automation on GCP</h3>
+            <p>
+              Scheduled integrations that keep two systems in step: Cloud Scheduler, Cloud
+              Functions, Secret Manager, Firestore. Built to survive the things that break every
+              naive sync script — overlapping runs, rate limits, and records that don't match the
+              documentation.
+            </p>
+            <ul class="card__list">
+              <li>Idempotent, incremental, resumable</li>
+              <li>Dead-letter handling instead of silent data loss</li>
+              <li>Structured logs you can alert on</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================== work -->
+    <section class="section section--alt" id="work" aria-labelledby="work-title">
+      <div class="shell">
+        <h2 class="section__title" id="work-title">Selected work</h2>
+        <p class="section__lede">
+          Three builds, each solving a problem that spreadsheets and built-in automation
+          couldn't.
+        </p>
+
+        <!-- ---------- case study 1 ---------- -->
+        <article class="case" id="case-forge">
+          <div class="case__body">
+            <p class="eyebrow">Atlassian Forge · Jira Cloud</p>
+            <h3 class="case__title">Release Readiness Gate</h3>
+
+            <div class="case__section">
+              <h4>The problem</h4>
+              <p>
+                A team's pre-release checklist lived in a Confluence page. It was followed when
+                people remembered, and the only evidence a check had happened was that somebody
+                said so in standup. Jira's built-in workflow validators couldn't express the rules
+                — things like "at least two <em>different</em> people approved, and the assignee
+                isn't one of them".
+              </p>
+            </div>
+
+            <div class="case__section">
+              <h4>What I built</h4>
+              <p>
+                A Forge app with a configurable rules engine. A scorecard on every issue shows
+                which checks pass and why; blocking rules prevent a transition until they're
+                resolved; each gated transition posts a structured audit comment. Project admins
+                configure the rules themselves in a settings screen — nine rule types covering
+                field content, regex formats, labels, issue links, blockers, due dates and
+                multi-person approvals.
+              </p>
+            </div>
+
+            <div class="case__section">
+              <h4>The decision that shaped it</h4>
+              <p>
+                Every rule evaluation lives in a pure module that imports nothing from the Forge
+                platform. It takes plain objects and returns plain objects, so the whole rules
+                engine is unit tested in under a second with no Jira instance and no mocks. The
+                adapters around it stay thin enough to review by eye — and the same function that
+                decides which buttons to render also decides whether the server honours the call,
+                so the UI and the enforcement can't drift apart.
+              </p>
+            </div>
+
+            <ul class="tags">
+              <li>Forge UI Kit</li>
+              <li>Jira REST v3</li>
+              <li>Forge KVS</li>
+              <li>Scheduled triggers</li>
+              <li>Jest</li>
+            </ul>
+          </div>
+
+          <figure class="case__figure">
+            <svg viewBox="0 0 340 260" role="img" aria-labelledby="diagram-1-title" class="diagram">
+              <title id="diagram-1-title">
+                Architecture: Jira UI modules and event triggers call resolvers, which delegate
+                all decisions to a pure rules engine, which the adapters then persist to Jira REST
+                and Forge storage.
+              </title>
+
+              <g class="diagram__group">
+                <rect x="12" y="10" width="140" height="34" rx="6" />
+                <text x="82" y="31">Issue panel</text>
+                <rect x="176" y="10" width="152" height="34" rx="6" />
+                <text x="252" y="31">Project settings</text>
+              </g>
+
+              <g class="diagram__group">
+                <rect x="12" y="72" width="316" height="34" rx="6" />
+                <text x="170" y="93">Resolvers · authorisation</text>
+              </g>
+
+              <g class="diagram__group diagram__group--accent">
+                <rect x="12" y="134" width="316" height="44" rx="6" />
+                <text x="170" y="152">Rules engine — PURE</text>
+                <text x="170" y="169" class="diagram__sub">no platform imports · unit tested</text>
+              </g>
+
+              <g class="diagram__group">
+                <rect x="12" y="206" width="152" height="34" rx="6" />
+                <text x="88" y="227">Jira REST</text>
+                <rect x="188" y="206" width="140" height="34" rx="6" />
+                <text x="258" y="227">Forge KVS</text>
+              </g>
+
+              <g class="diagram__arrows">
+                <path d="M82 44 V72" />
+                <path d="M252 44 V72" />
+                <path d="M170 106 V134" />
+                <path d="M88 178 V206" />
+                <path d="M258 178 V206" />
+              </g>
+            </svg>
+            <figcaption>Decisions in the middle; I/O only at the edges.</figcaption>
+          </figure>
+        </article>
+
+        <!-- ---------- case study 2 ---------- -->
+        <article class="case case--reverse" id="case-appsscript">
+          <div class="case__body">
+            <p class="eyebrow">Google Apps Script · Cloud Firestore</p>
+            <h3 class="case__title">Access Request Desk</h3>
+
+            <div class="case__section">
+              <h4>The problem</h4>
+              <p>
+                Requests for access to production systems were raised in a shared spreadsheet.
+                Anyone could edit any row, there was no record of who approved what, and
+                "temporary" access was never actually removed. The obvious fixes all meant buying
+                another per-seat tool for a process that runs a few times a week.
+              </p>
+            </div>
+
+            <div class="case__section">
+              <h4>What I built</h4>
+              <p>
+                An internal web app on Google Workspace: staff raise a request, approvers review
+                it, fulfillers mark it provisioned, and temporary access expires on its own. Every
+                state change lands in an append-only audit trail. Requests past their SLA escalate
+                automatically — with a tighter clock for sensitive systems than for an analytics
+                workspace.
+              </p>
+            </div>
+
+            <div class="case__section">
+              <h4>The decision that shaped it</h4>
+              <p>
+                There is no service-account key anywhere in the project. The script is attached to
+                the same Cloud project as Firestore and authenticates through IAM, so there is no
+                credential to leak and none to rotate — access is revoked by removing a binding.
+                Identity always comes from the session, never from the request payload. And the
+                whole authorisation model lives in one platform-free module, which is the only way
+                to get it under test at all in an environment with no test runner.
+              </p>
+            </div>
+
+            <ul class="tags">
+              <li>Apps Script V8</li>
+              <li>Firestore REST</li>
+              <li>RBAC</li>
+              <li>Optimistic locking</li>
+              <li>Time-driven triggers</li>
+            </ul>
+          </div>
+
+          <figure class="case__figure">
+            <svg viewBox="0 0 340 260" role="img" aria-labelledby="diagram-2-title" class="diagram">
+              <title id="diagram-2-title">
+                Architecture: the browser calls Apps Script entry points, which derive identity
+                from the session, consult a pure domain module, and reach Firestore over REST
+                using an IAM token rather than a service-account key.
+              </title>
+
+              <g class="diagram__group">
+                <rect x="60" y="10" width="220" height="34" rx="6" />
+                <text x="170" y="31">Browser · no framework</text>
+              </g>
+
+              <g class="diagram__group">
+                <rect x="24" y="72" width="292" height="40" rx="6" />
+                <text x="170" y="89">Apps Script entry points</text>
+                <text x="170" y="105" class="diagram__sub">identity from session, never payload</text>
+              </g>
+
+              <g class="diagram__group diagram__group--accent">
+                <rect x="24" y="140" width="140" height="44" rx="6" />
+                <text x="94" y="158">Domain — PURE</text>
+                <text x="94" y="175" class="diagram__sub">17 unit tests</text>
+              </g>
+
+              <g class="diagram__group">
+                <rect x="182" y="140" width="134" height="44" rx="6" />
+                <text x="249" y="158">Firestore client</text>
+                <text x="249" y="175" class="diagram__sub">IAM token, no key</text>
+              </g>
+
+              <g class="diagram__group">
+                <rect x="100" y="212" width="140" height="34" rx="6" />
+                <text x="170" y="233">Cloud Firestore</text>
+              </g>
+
+              <g class="diagram__arrows">
+                <path d="M170 44 V72" />
+                <path d="M94 112 V140" />
+                <path d="M249 112 V140" />
+                <path d="M249 184 V212" />
+              </g>
+            </svg>
+            <figcaption>No key on disk: the platform identity is the credential.</figcaption>
+          </figure>
+        </article>
+
+        <!-- ---------- case study 3 ---------- -->
+        <article class="case" id="case-gcp">
+          <div class="case__body">
+            <p class="eyebrow">Google Cloud · Node.js</p>
+            <h3 class="case__title">Serverless Sync Engine</h3>
+
+            <div class="case__section">
+              <h4>The problem</h4>
+              <p>
+                Contact data needed to stay in step between a third-party CRM and an internal
+                system. The script that did it had grown the usual failure modes: overlapping runs
+                double-writing, one malformed record killing an entire batch, a rate limit turning
+                into a retry storm, and no way to tell whether it had silently stopped working.
+              </p>
+            </div>
+
+            <div class="case__section">
+              <h4>What I built</h4>
+              <p>
+                A scheduled pipeline with a run lock taken in a database transaction, an
+                incremental window driven by a stored watermark, and idempotent writes keyed on
+                the upstream id — so a replay overwrites rather than duplicates. Records that
+                can't be mapped go to a dead-letter collection with the reason, so one bad record
+                never blocks the good ones. The API key lives in Secret Manager and is fetched at
+                runtime.
+              </p>
+            </div>
+
+            <div class="case__section">
+              <h4>The decision that shaped it</h4>
+              <p>
+                The retry policy uses full jitter — a uniform delay in <em>[0, exponential]</em>,
+                not the exponential value with a small wobble. With a wobble, every client that
+                failed together retries in a cluster and recreates the burst that caused the
+                failure. And the watermark only advances when a run wrote everything it read:
+                redoing idempotent work is cheap, and skipping a record that was never written is
+                not.
+              </p>
+            </div>
+
+            <ul class="tags">
+              <li>Cloud Functions gen 2</li>
+              <li>Cloud Scheduler + OIDC</li>
+              <li>Secret Manager</li>
+              <li>Firestore</li>
+              <li>44 tests, zero deps</li>
+            </ul>
+          </div>
+
+          <figure class="case__figure">
+            <svg viewBox="0 0 340 260" role="img" aria-labelledby="diagram-3-title" class="diagram">
+              <title id="diagram-3-title">
+                Architecture: Cloud Scheduler invokes the function with an OIDC token; the
+                function reads its key from Secret Manager, pages the upstream API, maps records
+                through a pure core, and writes to Firestore with a dead-letter path.
+              </title>
+
+              <g class="diagram__group">
+                <rect x="12" y="10" width="140" height="34" rx="6" />
+                <text x="82" y="31">Cloud Scheduler</text>
+                <rect x="188" y="10" width="140" height="34" rx="6" />
+                <text x="258" y="31">Secret Manager</text>
+              </g>
+
+              <g class="diagram__group">
+                <rect x="12" y="72" width="316" height="40" rx="6" />
+                <text x="170" y="89">Cloud Function · run lock</text>
+                <text x="170" y="105" class="diagram__sub">auth required · max 3 instances</text>
+              </g>
+
+              <g class="diagram__group diagram__group--accent">
+                <rect x="12" y="140" width="316" height="44" rx="6" />
+                <text x="170" y="158">Core — PURE</text>
+                <text x="170" y="175" class="diagram__sub">map · validate · plan window</text>
+              </g>
+
+              <g class="diagram__group">
+                <rect x="12" y="212" width="98" height="34" rx="6" />
+                <text x="61" y="233">contacts</text>
+                <rect x="122" y="212" width="98" height="34" rx="6" />
+                <text x="171" y="233">syncState</text>
+                <rect x="232" y="212" width="96" height="34" rx="6" />
+                <text x="280" y="233">dead-letter</text>
+              </g>
+
+              <g class="diagram__arrows">
+                <path d="M82 44 V72" />
+                <path d="M258 44 V72" />
+                <path d="M170 112 V140" />
+                <path d="M61 184 V212" />
+                <path d="M171 184 V212" />
+                <path d="M280 184 V212" />
+              </g>
+            </svg>
+            <figcaption>Every failure mode has a named, tested behaviour.</figcaption>
+          </figure>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================================================== approach -->
+    <section class="section" id="approach" aria-labelledby="approach-title">
+      <div class="shell">
+        <h2 class="section__title" id="approach-title">How I work</h2>
+        <p class="section__lede">
+          Internal tools fail slowly. These are the habits that stop it.
+        </p>
+
+        <div class="principles">
+          <article class="principle">
+            <h3>Decisions in the middle, I/O at the edges</h3>
+            <p>
+              Business rules go in modules that import nothing from the platform, so they can be
+              tested in milliseconds instead of by clicking through a UI. It's also what makes the
+              code reviewable by someone who doesn't know the platform.
+            </p>
+          </article>
+
+          <article class="principle">
+            <h3>The client is never the control</h3>
+            <p>
+              Browser-side validation is for speed of feedback. Every rule is enforced again on
+              the server, identity is always derived from the session, and permission checks
+              fail closed.
+            </p>
+          </article>
+
+          <article class="principle">
+            <h3>No credentials in code</h3>
+            <p>
+              Platform identity and secret managers over key files and environment variables.
+              There should be nothing to leak, and rotation shouldn't need a redeploy.
+            </p>
+          </article>
+
+          <article class="principle">
+            <h3>Quiet by default</h3>
+            <p>
+              A tool that notifies on everything gets muted within a week. I fingerprint outcomes
+              and only speak up when something actually changed — which also keeps the platform
+              bill down.
+            </p>
+          </article>
+
+          <article class="principle">
+            <h3>Designed for the bad day</h3>
+            <p>
+              Overlapping runs, rate limits, half-written batches, records that don't match the
+              documentation. These aren't edge cases in an integration — they're Tuesday. Each
+              one gets a named, tested behaviour.
+            </p>
+          </article>
+
+          <article class="principle">
+            <h3>Handover, not dependency</h3>
+            <p>
+              A README that explains the decisions, not just the commands. Tests that document
+              intent. Configuration your team can change without me.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================== cta -->
+    <section class="section section--cta" id="hire" aria-labelledby="hire-title">
+      <div class="shell shell--narrow">
+        <h2 class="section__title" id="hire-title">Have an internal tool project?</h2>
+        <p class="section__lede">
+          Tell me the manual process you want gone. If it's a fit I'll come back with an approach
+          and a fixed scope; if it isn't, I'll say so.
+        </p>
+
+        <p class="cta__actions">
+          <!--
+              TODO: replace with your Upwork profile URL before publishing.
+            -->
+          <a class="button button--primary button--lg" href="https://www.upwork.com/freelancers/~0197c9c393bbb5460b">
+            Reach out on Upwork
+          </a>
+        </p>
+
+        <p class="cta__note">
+          All contract engagements are handled strictly through Upwork — including scoping,
+          contracts and payment.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell">
+      <p>M. Kotantakis — internal tools, Jira apps and workflow automation.</p>
+      <p class="site-footer__muted">
+        Built as a static page: no tracking, no cookies, no analytics.
+      </p>
+    </div>
+  </footer>
+
+  <script src="assets/main.js" defer></script>
+</body>
+
+</html>
