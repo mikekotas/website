@@ -39,7 +39,7 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="stylesheet" href="assets/styles.css?v=20260921" />
 </head>
 
 <body>
@@ -113,13 +113,13 @@
           <article class="card">
             <h3>Atlassian Forge apps for Jira</h3>
             <p>
-              Custom issue panels, project settings screens, event triggers and scheduled jobs —
-              for the business rules Jira's built-in automation can't express. Runs entirely on
-              Atlassian's infrastructure, so there's no server to own and no data leaving your
-              tenant.
+              Custom issue panels, project settings screens, workflow validators, event triggers
+              and scheduled jobs — for the business rules Jira's built-in automation can't
+              express. Runs entirely on Atlassian's infrastructure, so there's no server to own
+              and no data leaving your tenant.
             </p>
             <ul class="card__list">
-              <li>Validation and approval gates on transitions</li>
+              <li>Approval gates Jira itself enforces, not just your app's UI</li>
               <li>Per-project configuration for admins</li>
               <li>Audit trails that satisfy a compliance review</li>
             </ul>
@@ -186,11 +186,19 @@
               <h4>What I built</h4>
               <p>
                 A Forge app with a configurable rules engine. A scorecard on every issue shows
-                which checks pass and why; blocking rules prevent a transition until they're
-                resolved; each gated transition posts a structured audit comment. Project admins
-                configure the rules themselves in a settings screen — nine rule types covering
-                field content, regex formats, labels, issue links, blockers, due dates and
-                multi-person approvals.
+                which checks pass and why, and every gated transition posts a structured audit
+                comment. Project admins configure the rules themselves in a settings screen —
+                nine rule types covering field content, regex formats, labels, issue links,
+                blockers, due dates and multi-person approvals.
+              </p>
+              <p>
+                Since Jira's own validators couldn't express those rules, the app ships one. The
+                gate runs <em>inside Jira's workflow engine</em>, so it holds on the status
+                dropdown, a card dragged across a board, a bulk change, an Automation rule and
+                the REST API — not only on the button in the app's own panel. Admins attach it to
+                the transitions that matter in the workflow editor, because Jira already owns
+                transition configuration and a second picker inside the app would only drift out
+                of step with it.
               </p>
             </div>
 
@@ -199,20 +207,26 @@
               <p>
                 Every rule evaluation lives in a pure module that imports nothing from the Forge
                 platform. It takes plain objects and returns plain objects, so the whole rules
-                engine is unit tested in under a second with no Jira instance and no mocks. The
-                adapters around it stay thin enough to review by eye — and the same function that
-                decides which buttons to render also decides whether the server honours the call,
-                so the UI and the enforcement can't drift apart.
+                engine is unit tested in seconds with no Jira instance and no mocks. The adapters
+                around it stay thin enough to review by eye — and the scorecard, the workflow
+                gate, the change trigger and the nightly sweep are four callers of one function,
+                so what the panel shows and what Jira enforces cannot drift apart.
               </p>
             </div>
 
             <ul class="tags">
               <li>Forge UI Kit</li>
+              <li>Workflow validator</li>
               <li>Jira REST v3</li>
               <li>Forge KVS</li>
               <li>Scheduled triggers</li>
               <li>Jest</li>
             </ul>
+
+            <p class="case__repo">
+              <a href="https://github.com/mikekotas/jira-release-readiness-gate"
+                 rel="noopener">Code and case study on GitHub<span aria-hidden="true"> →</span><span class="visually-hidden"> — Release Readiness Gate</span></a>
+            </p>
           </div>
 
           <figure class="case__figure">
@@ -263,95 +277,98 @@
         <!-- ---------- case study 2 ---------- -->
         <article class="case case--reverse" id="case-appsscript">
           <div class="case__body">
-            <p class="eyebrow">Google Apps Script · Cloud Firestore</p>
-            <h3 class="case__title">Access Request Desk</h3>
+            <p class="eyebrow">Google Apps Script · Google Sheets</p>
+            <h3 class="case__title">Sheets CRM &amp; Invoicing</h3>
 
             <div class="case__section">
               <h4>The problem</h4>
               <p>
-                Requests for access to production systems were raised in a shared spreadsheet.
-                Anyone could edit any row, there was no record of who approved what, and
-                "temporary" access was never actually removed. The obvious fixes all meant buying
-                another per-seat tool for a process that runs a few times a week.
+                Small teams often split customer details, sales opportunities and invoices across
+                several spreadsheets. The same data is typed repeatedly, pipeline status becomes
+                unreliable, and an invoice can be sent to an address that no longer belongs to the
+                deal's contact.
               </p>
             </div>
 
             <div class="case__section">
               <h4>What I built</h4>
               <p>
-                An internal web app on Google Workspace: staff raise a request, approvers review
-                it, fulfillers mark it provisioned, and temporary access expires on its own. Every
-                state change lands in an append-only audit trail. Requests past their SLA escalate
-                automatically — with a tighter clock for sensitive systems than for an analytics
-                workspace.
+                A role-controlled CRM web app backed by one Google Sheet. Users manage companies,
+                contacts and deals through focused screens and move opportunities across a visual
+                pipeline. Moving a deal to Won automatically creates a draft invoice populated from
+                the deal, company and primary contact. The app then generates a Drive PDF, confirms
+                the exact recipient before sending, tracks payment state and records the activity.
               </p>
             </div>
 
             <div class="case__section">
               <h4>The decision that shaped it</h4>
               <p>
-                There is no service-account key anywhere in the project. The script is attached to
-                the same Cloud project as Firestore and authenticates through IAM, so there is no
-                credential to leak and none to rotate — access is revoked by removing a binding.
-                Identity always comes from the session, never from the request payload. And the
-                whole authorisation model lives in one platform-free module, which is the only way
-                to get it under test at all in an environment with no test runner.
+                The spreadsheet is the data store, not the user interface. Every request is checked
+                against the signed-in Google account and its assigned role on the server. Contact,
+                company, deal and invoice records are linked by stable IDs, so editing a contact is
+                reflected when the next invoice is prepared. The Won transition is also idempotent:
+                repeating it cannot create a second invoice for the same deal.
               </p>
             </div>
 
             <ul class="tags">
               <li>Apps Script V8</li>
-              <li>Firestore REST</li>
-              <li>RBAC</li>
-              <li>Optimistic locking</li>
-              <li>Time-driven triggers</li>
+              <li>Google Sheets</li>
+              <li>Role-based access</li>
+              <li>Drive &amp; PDF invoices</li>
+              <li>Automated deal workflow</li>
             </ul>
+
+            <p class="case__repo">
+              <a href="https://github.com/mikekotas/google-sheets-crm-invoicing"
+                 rel="noopener">Code and case study on GitHub<span aria-hidden="true"> →</span><span class="visually-hidden"> — Sheets CRM &amp; Invoicing</span></a>
+            </p>
           </div>
 
           <figure class="case__figure">
             <svg viewBox="0 0 340 260" role="img" aria-labelledby="diagram-2-title" class="diagram">
               <title id="diagram-2-title">
-                Architecture: the browser calls Apps Script entry points, which derive identity
-                from the session, consult a pure domain module, and reach Firestore over REST
-                using an IAM token rather than a service-account key.
+                Architecture: authenticated users work in the Apps Script web app, which enforces
+                roles and coordinates linked CRM records in Sheets with invoice documents in Drive
+                and email delivery.
               </title>
 
               <g class="diagram__group">
                 <rect x="60" y="10" width="220" height="34" rx="6" />
-                <text x="170" y="31">Browser · no framework</text>
-              </g>
-
-              <g class="diagram__group">
-                <rect x="24" y="72" width="292" height="40" rx="6" />
-                <text x="170" y="89">Apps Script entry points</text>
-                <text x="170" y="105" class="diagram__sub">identity from session, never payload</text>
+                <text x="170" y="31">Signed-in Google users</text>
               </g>
 
               <g class="diagram__group diagram__group--accent">
-                <rect x="24" y="140" width="140" height="44" rx="6" />
-                <text x="94" y="158">Domain — PURE</text>
-                <text x="94" y="175" class="diagram__sub">17 unit tests</text>
+                <rect x="24" y="72" width="292" height="44" rx="6" />
+                <text x="170" y="90">Apps Script web app</text>
+                <text x="170" y="107" class="diagram__sub">RBAC · CRM workflow · invoice service</text>
               </g>
 
               <g class="diagram__group">
-                <rect x="182" y="140" width="134" height="44" rx="6" />
-                <text x="249" y="158">Firestore client</text>
-                <text x="249" y="175" class="diagram__sub">IAM token, no key</text>
+                <rect x="12" y="148" width="96" height="42" rx="6" />
+                <text x="60" y="166">Sheets</text>
+                <text x="60" y="181" class="diagram__sub">CRM data</text>
+                <rect x="122" y="148" width="96" height="42" rx="6" />
+                <text x="170" y="166">Drive</text>
+                <text x="170" y="181" class="diagram__sub">Docs · PDFs</text>
+                <rect x="232" y="148" width="96" height="42" rx="6" />
+                <text x="280" y="166">Gmail</text>
+                <text x="280" y="181" class="diagram__sub">delivery</text>
               </g>
 
               <g class="diagram__group">
-                <rect x="100" y="212" width="140" height="34" rx="6" />
-                <text x="170" y="233">Cloud Firestore</text>
+                <rect x="54" y="218" width="232" height="32" rx="6" />
+                <text x="170" y="239">Won deal → draft invoice</text>
               </g>
 
               <g class="diagram__arrows">
                 <path d="M170 44 V72" />
-                <path d="M94 112 V140" />
-                <path d="M249 112 V140" />
-                <path d="M249 184 V212" />
+                <path d="M60 116 V148" /><path d="M170 116 V148" /><path d="M280 116 V148" />
+                <path d="M170 190 V218" />
               </g>
             </svg>
-            <figcaption>No key on disk: the platform identity is the credential.</figcaption>
+            <figcaption>One pipeline transition creates the next piece of work automatically.</figcaption>
           </figure>
         </article>
 
@@ -406,6 +423,11 @@
               <li>Secret Manager</li>
               <li>76 tests, zero deps</li>
             </ul>
+
+            <p class="case__repo">
+              <a href="https://github.com/mikekotas/saas-contracts-tracker"
+                 rel="noopener">Code and case study on GitHub<span aria-hidden="true"> →</span><span class="visually-hidden"> — SaaS Renewal Tracker</span></a>
+            </p>
           </div>
 
           <figure class="case__figure">
@@ -535,9 +557,6 @@
         </p>
 
         <p class="cta__actions">
-          <!--
-              TODO: replace with your Upwork profile URL before publishing.
-            -->
           <a class="button button--primary button--lg" href="https://www.upwork.com/freelancers/~0197c9c393bbb5460b">
             Reach out on Upwork
           </a>
@@ -554,6 +573,7 @@
   <footer class="site-footer">
     <div class="shell">
       <p>M. Kotantakis — internal tools, Jira apps and workflow automation.</p>
+      <p><a href="https://github.com/mikekotas" rel="noopener">github.com/mikekotas</a></p>
       <p class="site-footer__muted">
         Built as a static page: no tracking, no cookies, no analytics.
       </p>
